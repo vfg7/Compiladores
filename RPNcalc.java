@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 import java.util.stream.Stream;
 
 
-class RPNCalc {
+public class RPNCalc {
     public Stack<Integer> stack;
 
         public RPNCalc(){
@@ -71,10 +71,40 @@ class RPNCalc {
 
         return result;
     }
-}
     
+
+public static void main (String[]args){
+
+    String operation, repeat;
+    int result;
+
+    Scanner in = new Scanner(System.in);
+    RPNCalc calculator = new RPNCalc();
+
+    do{
+
+        calculator.clearStack();
+        System.out.println("ENTER RPN EXPRESSION SUCH AS  '1 2 +'");
+
+        operation = in.nextLine();
+        Lexer l = new Lexer(operation);
+        l.lexicalAnalyser(l);
+
+        result = calculator.evaluateExpression(operation);
+        System.out.println(" \n EQUALS: " + result);
+
+        System.out.println("ANOTHER? [Y/N]");
+        repeat = in.nextLine();
+
+    } while (repeat.equalsIgnoreCase("y"));
+
+}
+}
+
 enum Token{
     //definindo operações de tokenizáveis bem simples, só as quatro operações básicas e números inteiros
+	//adicionei poucas operações apenas para ver se o analisador léxico conseguiria testar os mesmos casos da RPNCalc feita anteriormente
+	//reconheço que poderia ser mais completo, mas, por enquanto, é o que consegui testar pelo prazo. 
 
     TK_SUM ("\\+"),
     TK_SUB ("-"),
@@ -86,7 +116,7 @@ enum Token{
     Token(String regex) {
         pattern = Pattern.compile("^" + regex);
     }
-    
+
     int endOfMatch(String s){
         Matcher m = pattern.matcher(s);
 
@@ -98,6 +128,7 @@ enum Token{
 
 
 }
+
 class Lexer {
     private StringBuilder input = new StringBuilder();
     private Token token;
@@ -107,15 +138,6 @@ class Lexer {
     private Set<Character> blankChars = new HashSet<Character>();
 
     public Lexer(String expression) {
-        //change file path to added string block
-        // try (Stream<String> st = Files.lines(Paths.get(filePath))) {
-        //     st.forEach(input::append);
-        // } catch (IOException ex) {
-        //     exausthed = true;
-        //     errorMessage = "Could not read file: " + filePath;
-        //     return;
-        // }
-
 
 
         blankChars.add('\r');
@@ -215,30 +237,3 @@ class Lexer {
 }
 
 
-
-public static void main (String[]args){
-    
-    String operation, repeat;
-    int result;
-
-    Scanner in = new Scanner(System.in);
-    RPNCalc calculator = new RPNCalc();
-
-    do{
-
-        calculator.clearStack();
-        System.out.println("ENTER RPN EXPRESSION SUCH AS  '1 2 +'");
-        
-        operation = in.nextLine();
-        Lexer l = new Lexer(operation);
-        lexicalAnalyser(l);
-
-        result = calculator.evaluateExpression(operation);
-        System.out.println(" \n EQUALS: " + result);
-
-        System.out.println("ANOTHER? [Y/N]");
-        repeat = in.nextLine();
-
-    } while (repeat.equalsIgnoreCase("y"));
-
-}
